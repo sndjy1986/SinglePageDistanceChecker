@@ -8,6 +8,9 @@ export const geocode = async (address: string): Promise<[number, number]> => {
   }
   const res = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${MAPBOX_TOKEN}`);
   const data = await res.json();
+  if (data.message) {
+    throw new Error(`Mapbox API Error: ${data.message} (Is your Mapbox Token set?)`);
+  }
   if (data.features && data.features.length > 0) {
     const coords = data.features[0].center as [number, number];
     geocodeCache[address] = coords;
